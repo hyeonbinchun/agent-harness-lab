@@ -19,17 +19,24 @@ ask the user before implementing.
 For minor implementation details that do not affect
 observable behavior, use reasonable engineering judgment.
 
-## Requirements interpretation
+## Requirements Compliance
 
 Before implementing a feature:
 
-1. Identify explicit requirements.
-2. Identify ambiguous decisions.
-3. Separate required behavior from implementation choices.
-4. Do not silently turn assumptions into product requirements.
+1. Read docs/requirements.md.
+2. Identify explicit requirements.
+3. Identify ambiguous product decisions.
+4. Do not invent user-facing behavior not specified in requirements.
+5. If a product decision is required but unspecified, ask the user.
 
-If multiple reasonable product behaviors exist,
-ask the user instead of choosing one.
+After implementation:
+
+1. Audit the implementation against requirements.md.
+2. Identify missing requirements.
+3. Identify out-of-scope behavior.
+4. Add regression tests for relevant requirements.
+5. Run npm run verify.
+6. Do not commit or push unless explicitly requested.
 
 ## Implementation
 
