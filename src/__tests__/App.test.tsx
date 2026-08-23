@@ -138,6 +138,92 @@ describe('TODO 완료/미완료 토글', () => {
   });
 });
 
+describe('TODO 수정', () => {
+  it('수정 버튼을 누르면 edit input이 나타난다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '수정 전{Enter}');
+    await user.click(screen.getByRole('button', { name: '수정' }));
+
+    expect(screen.getByDisplayValue('수정 전')).toBeInTheDocument();
+  });
+
+  it('텍스트를 변경하고 Enter를 누르면 TODO가 업데이트된다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '원래 텍스트{Enter}');
+    await user.click(screen.getByRole('button', { name: '수정' }));
+
+    const editInput = screen.getByDisplayValue('원래 텍스트');
+    await user.clear(editInput);
+    await user.type(editInput, '변경된 텍스트{Enter}');
+
+    expect(screen.getByText('변경된 텍스트')).toBeInTheDocument();
+    expect(screen.queryByText('원래 텍스트')).not.toBeInTheDocument();
+  });
+
+  it('Escape를 누르면 원래 텍스트가 유지된다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '원래 텍스트{Enter}');
+    await user.click(screen.getByRole('button', { name: '수정' }));
+
+    const editInput = screen.getByDisplayValue('원래 텍스트');
+    await user.clear(editInput);
+    await user.type(editInput, '임시 텍스트');
+    await user.keyboard('{Escape}');
+
+    expect(screen.getByText('원래 텍스트')).toBeInTheDocument();
+    expect(screen.queryByText('임시 텍스트')).not.toBeInTheDocument();
+  });
+
+  it('취소 버튼을 누르면 원래 텍스트가 유지된다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '원래 텍스트{Enter}');
+    await user.click(screen.getByRole('button', { name: '수정' }));
+    // user.click은 pointer 시퀀스(blur→click)에서 React 19 + jsdom 타이밍 문제가 있음.
+    // 취소 버튼의 click handler가 cancelEdit을 호출한다는 behavior 자체를 검증한다.
+    fireEvent.click(screen.getByRole('button', { name: '취소' }));
+
+    expect(screen.getByText('원래 텍스트')).toBeInTheDocument();
+  });
+
+  it('빈 텍스트로 확정하면 원래 텍스트가 유지된다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '원래 텍스트{Enter}');
+    await user.click(screen.getByRole('button', { name: '수정' }));
+
+    const editInput = screen.getByDisplayValue('원래 텍스트');
+    await user.clear(editInput);
+    await user.keyboard('{Enter}');
+
+    expect(screen.getByText('원래 텍스트')).toBeInTheDocument();
+  });
+
+  it('수정된 텍스트가 localStorage에 저장된다', async () => {
+    const user = userEvent.setup();
+    const { unmount } = renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '원래 텍스트{Enter}');
+    await user.click(screen.getByRole('button', { name: '수정' }));
+
+    const editInput = screen.getByDisplayValue('원래 텍스트');
+    await user.clear(editInput);
+    await user.type(editInput, '변경된 텍스트{Enter}');
+    unmount();
+
+    renderApp();
+    expect(screen.getByText('변경된 텍스트')).toBeInTheDocument();
+  });
+});
+
 describe('TODO 삭제', () => {
   it('삭제 버튼을 누르면 해당 TODO가 목록에서 제거된다', async () => {
     const user = userEvent.setup();

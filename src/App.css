@@ -66,6 +66,20 @@ h1 {
   border-radius: 4px;
   background: #ef4444;
   color: #fff;
+  margin-left: 4px;
+}
+
+.todo-list li button.edit-btn {
+  background: #6b7280;
+}
+
+.todo-list li .edit-input {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 15px;
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  outline: none;
 }
 
 .empty {

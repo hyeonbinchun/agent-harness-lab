@@ -14,6 +14,8 @@ export default function App() {
     }
   });
   const [input, setInput] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editText, setEditText] = useState('');
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
@@ -32,6 +34,23 @@ export default function App() {
 
   const deleteTodo = (id: number) => {
     setTodos(todos.filter(t => t.id !== id));
+  };
+
+  const startEdit = (todo: Todo) => {
+    setEditingId(todo.id);
+    setEditText(todo.text);
+  };
+
+  const confirmEdit = (id: number) => {
+    const text = editText.trim();
+    if (text) {
+      setTodos(todos.map(t => t.id === id ? { ...t, text } : t));
+    }
+    setEditingId(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
   };
 
   return (
@@ -53,8 +72,28 @@ export default function App() {
         {todos.length === 0 && <li className="empty">할 일이 없습니다.</li>}
         {todos.map(todo => (
           <li key={todo.id} className={todo.completed ? 'completed' : ''}>
-            <span onClick={() => toggleTodo(todo.id)}>{todo.text}</span>
-            <button onClick={() => deleteTodo(todo.id)}>삭제</button>
+            {editingId === todo.id ? (
+              <>
+                <input
+                  className="edit-input"
+                  value={editText}
+                  autoFocus
+                  onChange={e => setEditText(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && !e.nativeEvent.isComposing) confirmEdit(todo.id);
+                    if (e.key === 'Escape') cancelEdit();
+                  }}
+                  onBlur={cancelEdit}
+                />
+                <button onClick={cancelEdit}>취소</button>
+              </>
+            ) : (
+              <>
+                <span onClick={() => toggleTodo(todo.id)}>{todo.text}</span>
+                <button className="edit-btn" onClick={() => startEdit(todo)}>수정</button>
+                <button onClick={() => deleteTodo(todo.id)}>삭제</button>
+              </>
+            )}
           </li>
         ))}
       </ul>
