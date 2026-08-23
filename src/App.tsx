@@ -44,7 +44,7 @@ export default function App() {
           value={input}
           placeholder="할 일을 입력하세요"
           onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && addTodo()}
+          onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && addTodo()}
         />
         <button onClick={addTodo}>추가</button>
       </div>
