@@ -237,6 +237,87 @@ describe('TODO 삭제', () => {
   });
 });
 
+describe('우선순위', () => {
+  it('기본 우선순위는 보통이다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '기본 우선순위{Enter}');
+
+    const item = screen.getByText('기본 우선순위').closest('li');
+    expect(item).toHaveAttribute('data-priority', 'medium');
+  });
+
+  it('추가 시 선택한 우선순위로 TODO가 생성된다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.selectOptions(screen.getByLabelText('우선순위'), '높음');
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '긴급 작업{Enter}');
+
+    const item = screen.getByText('긴급 작업').closest('li');
+    expect(item).toHaveAttribute('data-priority', 'high');
+  });
+
+  it('항목별 우선순위 선택으로 우선순위를 변경할 수 있다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '변경 대상{Enter}');
+
+    const item = screen.getByText('변경 대상').closest('li') as HTMLElement;
+    await user.selectOptions(screen.getByLabelText('변경 대상 우선순위'), '낮음');
+
+    expect(item).toHaveAttribute('data-priority', 'low');
+  });
+
+  it('우선순위가 높은 순으로 정렬되어 표시된다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    const input = screen.getByPlaceholderText('할 일을 입력하세요');
+
+    await user.type(input, '보통 작업{Enter}');
+    await user.selectOptions(screen.getByLabelText('우선순위'), '낮음');
+    await user.type(input, '낮은 작업{Enter}');
+    await user.selectOptions(screen.getByLabelText('우선순위'), '높음');
+    await user.type(input, '높은 작업{Enter}');
+
+    const items = screen.getAllByRole('listitem').filter(el => !el.classList.contains('empty'));
+    expect(items.map(el => el.textContent)).toEqual([
+      expect.stringContaining('높은 작업'),
+      expect.stringContaining('보통 작업'),
+      expect.stringContaining('낮은 작업'),
+    ]);
+  });
+
+  it('우선순위가 localStorage에 저장되고 재마운트 시 복원된다', async () => {
+    const user = userEvent.setup();
+    const { unmount } = renderApp();
+
+    await user.selectOptions(screen.getByLabelText('우선순위'), '높음');
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '유지될 우선순위{Enter}');
+    unmount();
+
+    renderApp();
+
+    const item = screen.getByText('유지될 우선순위').closest('li');
+    expect(item).toHaveAttribute('data-priority', 'high');
+  });
+
+  it('priority 필드가 없는 기존 localStorage 데이터도 정상 동작한다', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify([{ id: 1, text: '레거시 항목', completed: false }]),
+    );
+
+    renderApp();
+
+    const item = screen.getByText('레거시 항목').closest('li');
+    expect(item).toHaveAttribute('data-priority', 'medium');
+  });
+});
+
 describe('localStorage persistence', () => {
   it('TODO 추가 후 다시 mount하면 localStorage에서 복원된다', async () => {
     const user = userEvent.setup();

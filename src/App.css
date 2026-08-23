@@ -46,6 +46,19 @@ h1 {
   justify-content: space-between;
   padding: 10px 12px;
   border-bottom: 1px solid #eee;
+  border-left: 4px solid transparent;
+}
+
+.todo-list li[data-priority='high'] {
+  border-left-color: #ef4444;
+}
+
+.todo-list li[data-priority='medium'] {
+  border-left-color: #f59e0b;
+}
+
+.todo-list li[data-priority='low'] {
+  border-left-color: #10b981;
 }
 
 .todo-list li span {
@@ -80,6 +93,14 @@ h1 {
   border: 1px solid #3b82f6;
   border-radius: 4px;
   outline: none;
+}
+
+.priority-select {
+  padding: 4px 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-left: 4px;
 }
 
 .empty {
