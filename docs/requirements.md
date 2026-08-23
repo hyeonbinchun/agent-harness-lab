@@ -84,7 +84,7 @@ TODOs are displayed in the following priority order:
 2. `medium`
 3. `low`
 
-- TODOs with the same priority preserve their creation order.
+- Within the same priority, ordering is further determined by due date (see 7.4).
 
 ### 6.5 Priority Persistence
 
@@ -97,24 +97,60 @@ TODOs are displayed in the following priority order:
 
 ---
 
-## 7. Persistence
+## 7. Due Date
+
+### 7.1 Optionality
+
+- A TODO may optionally have a due date.
+- A TODO can be created, and can remain, without a due date.
+
+### 7.2 Setting Due Date
+
+- The user can set a due date when creating a TODO.
+- The user can set, change, or clear the due date of an existing TODO at any time.
+
+### 7.3 Due Date Format
+
+- A due date is a calendar date only; it does not include a time component.
+- Due dates in the past are allowed and must not be blocked or validated.
+
+### 7.4 Due Date Ordering
+
+Within the same priority:
+
+1. TODOs with a due date are ordered by due date ascending (earliest first).
+2. TODOs without a due date are displayed after all TODOs with a due date.
+3. TODOs with the same priority and the same due date (or both without a due date) preserve their creation order.
+
+### 7.5 Due Date Persistence
+
+- A TODO's due date must be persisted together with the TODO.
+- Reloading the application must preserve the due date.
+
+### 7.6 Legacy TODOs
+
+- Existing TODO data that does not contain a due date must be treated as having no due date.
+
+---
+
+## 8. Persistence
 
 - TODOs must persist across application reloads using localStorage.
-- Creating, editing, completing, deleting, and changing the priority of a TODO must eventually be reflected in persisted data.
+- Creating, editing, completing, deleting, and changing the priority or due date of a TODO must eventually be reflected in persisted data.
 - Invalid or unreadable localStorage data must not prevent the application from starting.
 
 ---
 
-## 8. Scope
+## 9. Scope
 
 The following behaviors are NOT currently required:
 
-- Filtering TODOs by priority
+- Filtering TODOs by priority or due date
 - Searching TODOs
-- Sorting TODOs by criteria other than the defined priority order
+- Sorting TODOs by criteria other than the defined priority/due-date order
 - Priority colors or visual indicators
+- Due date colors or visual indicators (e.g. overdue highlighting)
 - Notifications
-- Deadlines or due dates
 - Categories or tags
 - Server-side persistence
 - User accounts
@@ -124,7 +160,7 @@ Do not implement these features unless explicitly requested.
 
 ---
 
-## 9. Requirements vs Implementation
+## 10. Requirements vs Implementation
 
 This document defines observable product behavior.
 
@@ -142,7 +178,7 @@ When an implementation decision changes observable behavior, update the requirem
 
 ---
 
-## 10. Handling Ambiguous Requests
+## 11. Handling Ambiguous Requests
 
 When a user request is ambiguous and multiple reasonable product behaviors are possible, do not silently choose a product behavior.
 

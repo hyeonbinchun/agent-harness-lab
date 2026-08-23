@@ -82,7 +82,8 @@ h1 {
   outline: none;
 }
 
-.priority-select {
+.priority-select,
+.due-date-input {
   padding: 4px 8px;
   font-size: 13px;
   border: 1px solid #ccc;

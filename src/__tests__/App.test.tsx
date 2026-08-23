@@ -318,6 +318,119 @@ describe('우선순위', () => {
   });
 });
 
+describe('마감일', () => {
+  it('마감일을 지정하지 않으면 마감일이 없는 상태로 생성된다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '마감일 없음{Enter}');
+
+    expect(screen.getByLabelText('마감일 없음 마감일')).toHaveValue('');
+  });
+
+  it('생성 시 마감일을 지정하면 해당 TODO에 마감일이 설정된다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    fireEvent.change(screen.getByLabelText('마감일'), { target: { value: '2026-09-01' } });
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '마감일 있음{Enter}');
+
+    expect(screen.getByLabelText('마감일 있음 마감일')).toHaveValue('2026-09-01');
+  });
+
+  it('항목별 마감일 입력으로 기존 TODO의 마감일을 변경할 수 있다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '변경 대상{Enter}');
+    fireEvent.change(screen.getByLabelText('변경 대상 마감일'), { target: { value: '2026-10-15' } });
+
+    expect(screen.getByLabelText('변경 대상 마감일')).toHaveValue('2026-10-15');
+  });
+
+  it('마감일을 지우면 마감일이 없는 상태로 돌아간다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '지울 대상{Enter}');
+    fireEvent.change(screen.getByLabelText('지울 대상 마감일'), { target: { value: '2026-10-15' } });
+    fireEvent.change(screen.getByLabelText('지울 대상 마감일'), { target: { value: '' } });
+
+    expect(screen.getByLabelText('지울 대상 마감일')).toHaveValue('');
+  });
+
+  it('과거 날짜도 마감일로 지정할 수 있다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    fireEvent.change(screen.getByLabelText('마감일'), { target: { value: '2020-01-01' } });
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '과거 마감일{Enter}');
+
+    expect(screen.getByLabelText('과거 마감일 마감일')).toHaveValue('2020-01-01');
+  });
+
+  it('동일 priority 내에서 마감일이 빠른 순으로 정렬된다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    const input = screen.getByPlaceholderText('할 일을 입력하세요');
+    const dateInput = screen.getByLabelText('마감일');
+
+    fireEvent.change(dateInput, { target: { value: '2026-09-20' } });
+    await user.type(input, '늦은 작업{Enter}');
+    fireEvent.change(dateInput, { target: { value: '2026-09-10' } });
+    await user.type(input, '빠른 작업{Enter}');
+
+    const items = screen.getAllByRole('listitem').filter(el => !el.classList.contains('empty'));
+    expect(items.map(el => el.textContent)).toEqual([
+      expect.stringContaining('빠른 작업'),
+      expect.stringContaining('늦은 작업'),
+    ]);
+  });
+
+  it('동일 priority 내에서 마감일이 없는 TODO는 마감일이 있는 TODO 뒤에 정렬된다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    const input = screen.getByPlaceholderText('할 일을 입력하세요');
+    const dateInput = screen.getByLabelText('마감일');
+
+    await user.type(input, '마감일 없는 작업{Enter}');
+    fireEvent.change(dateInput, { target: { value: '2026-09-10' } });
+    await user.type(input, '마감일 있는 작업{Enter}');
+
+    const items = screen.getAllByRole('listitem').filter(el => !el.classList.contains('empty'));
+    expect(items.map(el => el.textContent)).toEqual([
+      expect.stringContaining('마감일 있는 작업'),
+      expect.stringContaining('마감일 없는 작업'),
+    ]);
+  });
+
+  it('마감일이 localStorage에 저장되고 재마운트 시 복원된다', async () => {
+    const user = userEvent.setup();
+    const { unmount } = renderApp();
+
+    fireEvent.change(screen.getByLabelText('마감일'), { target: { value: '2026-11-05' } });
+    await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '유지될 마감일{Enter}');
+    unmount();
+
+    renderApp();
+
+    expect(screen.getByLabelText('유지될 마감일 마감일')).toHaveValue('2026-11-05');
+  });
+
+  it('dueDate 필드가 없는 기존 localStorage 데이터도 마감일 없는 상태로 정상 동작한다', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify([{ id: 1, text: '레거시 항목', completed: false, priority: 'medium' }]),
+    );
+
+    renderApp();
+
+    expect(screen.getByLabelText('레거시 항목 마감일')).toHaveValue('');
+  });
+});
+
 describe('localStorage persistence', () => {
   it('TODO 추가 후 다시 mount하면 localStorage에서 복원된다', async () => {
     const user = userEvent.setup();

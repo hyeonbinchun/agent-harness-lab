@@ -18,6 +18,7 @@ export default function App() {
   });
   const [input, setInput] = useState('');
   const [priority, setPriority] = useState<Priority>('medium');
+  const [dueDate, setDueDate] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState('');
 
@@ -28,8 +29,9 @@ export default function App() {
   const addTodo = () => {
     const text = input.trim();
     if (!text) return;
-    setTodos([...todos, { id: Date.now(), text, completed: false, priority }]);
+    setTodos([...todos, { id: Date.now(), text, completed: false, priority, dueDate: dueDate || undefined }]);
     setInput('');
+    setDueDate('');
   };
 
   const toggleTodo = (id: number) => {
@@ -38,6 +40,10 @@ export default function App() {
 
   const changePriority = (id: number, newPriority: Priority) => {
     setTodos(todos.map(t => t.id === id ? { ...t, priority: newPriority } : t));
+  };
+
+  const changeDueDate = (id: number, newDueDate: string) => {
+    setTodos(todos.map(t => t.id === id ? { ...t, dueDate: newDueDate || undefined } : t));
   };
 
   const deleteTodo = (id: number) => {
@@ -61,7 +67,14 @@ export default function App() {
     setEditingId(null);
   };
 
-  const sortedTodos = [...todos].sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
+  const sortedTodos = [...todos].sort((a, b) => {
+    const priorityDiff = PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
+    if (priorityDiff !== 0) return priorityDiff;
+    if (a.dueDate && b.dueDate) return a.dueDate < b.dueDate ? -1 : a.dueDate > b.dueDate ? 1 : 0;
+    if (a.dueDate) return -1;
+    if (b.dueDate) return 1;
+    return 0;
+  });
 
   return (
     <div className="app">
@@ -85,6 +98,13 @@ export default function App() {
           <option value="medium">{PRIORITY_LABEL.medium}</option>
           <option value="low">{PRIORITY_LABEL.low}</option>
         </select>
+        <input
+          type="date"
+          className="due-date-input"
+          aria-label="마감일"
+          value={dueDate}
+          onChange={e => setDueDate(e.target.value)}
+        />
         <button onClick={addTodo}>추가</button>
       </div>
 
@@ -120,6 +140,13 @@ export default function App() {
                   <option value="medium">{PRIORITY_LABEL.medium}</option>
                   <option value="low">{PRIORITY_LABEL.low}</option>
                 </select>
+                <input
+                  type="date"
+                  className="due-date-input"
+                  aria-label={`${todo.text} 마감일`}
+                  value={todo.dueDate ?? ''}
+                  onChange={e => changeDueDate(todo.id, e.target.value)}
+                />
                 <button className="edit-btn" onClick={() => startEdit(todo)}>수정</button>
                 <button onClick={() => deleteTodo(todo.id)}>삭제</button>
               </>
