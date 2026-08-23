@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(git -C /Users/hyeonbinchun/Documents/github/ai-harness-todo add .claude/ CLAUDE.md)",
+      "Bash(git -C /Users/hyeonbinchun/Documents/github/ai-harness-todo commit -m ':*)",
+      "Bash(git -C /Users/hyeonbinchun/Documents/github/ai-harness-todo push origin dev)"
+    ]
+  }
+}
