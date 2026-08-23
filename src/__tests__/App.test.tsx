@@ -20,7 +20,7 @@ afterEach(() => {
 describe('빈 상태', () => {
   it('TODO가 없으면 빈 상태 메시지를 표시한다', () => {
     renderApp();
-    expect(screen.getByText('할 일이 없습니다.')).toBeInTheDocument();
+    expect(screen.getByText('INTENTIONALLY_WRONG_TEXT')).toBeInTheDocument();
   });
 });
 
