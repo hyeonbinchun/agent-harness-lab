@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import App from '../App';
@@ -244,8 +244,8 @@ describe('우선순위', () => {
 
     await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '기본 우선순위{Enter}');
 
-    const item = screen.getByText('기본 우선순위').closest('li');
-    expect(item).toHaveAttribute('data-priority', 'medium');
+    const item = screen.getByText('기본 우선순위').closest('li') as HTMLElement;
+    expect(within(item).getByRole('combobox')).toHaveValue('medium');
   });
 
   it('추가 시 선택한 우선순위로 TODO가 생성된다', async () => {
@@ -255,8 +255,8 @@ describe('우선순위', () => {
     await user.selectOptions(screen.getByLabelText('우선순위'), '높음');
     await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '긴급 작업{Enter}');
 
-    const item = screen.getByText('긴급 작업').closest('li');
-    expect(item).toHaveAttribute('data-priority', 'high');
+    const item = screen.getByText('긴급 작업').closest('li') as HTMLElement;
+    expect(within(item).getByRole('combobox')).toHaveValue('high');
   });
 
   it('항목별 우선순위 선택으로 우선순위를 변경할 수 있다', async () => {
@@ -268,7 +268,7 @@ describe('우선순위', () => {
     const item = screen.getByText('변경 대상').closest('li') as HTMLElement;
     await user.selectOptions(screen.getByLabelText('변경 대상 우선순위'), '낮음');
 
-    expect(item).toHaveAttribute('data-priority', 'low');
+    expect(within(item).getByRole('combobox')).toHaveValue('low');
   });
 
   it('우선순위가 높은 순으로 정렬되어 표시된다', async () => {
@@ -301,8 +301,8 @@ describe('우선순위', () => {
 
     renderApp();
 
-    const item = screen.getByText('유지될 우선순위').closest('li');
-    expect(item).toHaveAttribute('data-priority', 'high');
+    const item = screen.getByText('유지될 우선순위').closest('li') as HTMLElement;
+    expect(within(item).getByRole('combobox')).toHaveValue('high');
   });
 
   it('priority 필드가 없는 기존 localStorage 데이터도 정상 동작한다', () => {
@@ -313,8 +313,8 @@ describe('우선순위', () => {
 
     renderApp();
 
-    const item = screen.getByText('레거시 항목').closest('li');
-    expect(item).toHaveAttribute('data-priority', 'medium');
+    const item = screen.getByText('레거시 항목').closest('li') as HTMLElement;
+    expect(within(item).getByRole('combobox')).toHaveValue('medium');
   });
 });
 
