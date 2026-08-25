@@ -1,0 +1,98 @@
+.app {
+  max-width: 480px;
+  margin: 60px auto;
+  padding: 0 16px;
+  font-family: sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.input-row input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.input-row button {
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background: #3b82f6;
+  color: #fff;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.todo-list li span {
+  flex: 1;
+  cursor: pointer;
+}
+
+.todo-list li.completed span {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+.todo-list li button {
+  padding: 4px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background: #ef4444;
+  color: #fff;
+  margin-left: 4px;
+}
+
+.todo-list li button.edit-btn {
+  background: #6b7280;
+}
+
+.todo-list li .edit-input {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 15px;
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  outline: none;
+}
+
+.priority-select,
+.due-date-input {
+  padding: 4px 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+
+.empty {
+  color: #9ca3af;
+  text-align: center;
+  padding: 20px 0;
+}
