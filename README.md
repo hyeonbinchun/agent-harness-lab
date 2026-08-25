@@ -5,19 +5,18 @@ AI Agent(Claude Code)가 코드를 작성할 때, 그 결과를 사람이 매번
 
 ## Why
 
-목적은 "Agent가 실수해도 system이 감지하고 복구하는 범위"를 넓히는 것. Agent에게 "검증해"라고 말하는 건 신뢰할 수 없다. 대신 Agent가 검증할 수밖에 없는 environment를 만드는 게 이 프로젝트의 방향이다.
+목적은 Agent가 실수해도 시스템이 감지하고 복구하는 범위를 넓히는 것. Agent에게 "검증해"라고 말하는 대신 Agent가 검증할 수밖에 없는 환경을 만드는 게 이 프로젝트의 방향이다.
 
 ## Levels
 
-Level 0 AI Agent → 코드 생성
-Level 1 AI Agent → npm run verify + CLAUDE.md + requirements.md → 자체 검증
-Level 2 GitHub Actions → 독립적인 verification
-Level 3 Branch Ruleset → FAIL 시 merge 차단
-Level 4 CI failure → Agent feedback → 자동 diagnosis → Agent self-correction → CI
-
-
 각 레벨은 이전 레벨의 실패를 전제로 만들어졌다. "Agent가 이걸 못 할 수도
 있다"를 먼저 관찰하고, 그다음 그걸 막는 layer를 추가하는 순서로 진행했다.
+- Level 0 AI Agent → 코드 생성
+- Level 1 AI Agent → npm run verify + CLAUDE.md + requirements.md → 자체 검증
+- Level 2 GitHub Actions → 독립적인 verification
+- Level 3 Branch Ruleset → FAIL 시 merge 차단
+- Level 4 CI failure → Agent feedback → 자동 diagnosis → Agent self-correction → CI
+
 
 ## What broke at each level
 
@@ -41,7 +40,7 @@ Level 4 CI failure → Agent feedback → 자동 diagnosis → Agent self-correc
 - 전체 루프는 여전히 사람이 "merge까지 해도 좋아"처럼 명시적으로
   트리거해야 시작됨 — CI 실패가 자동으로 Agent 세션을 깨우진 않는다
 
-다음 단계는 CI 실패가 사람의 트리거 없이 자동으로 Agent 세션을 깨우는 것까지 포함해
+다음 단계는 CI 실패가 사람의 트리거 없이 자동으로 Agent 세션을 깨우는 것까지 포함할 예정
 
 ## Harness 구성 요소
 
