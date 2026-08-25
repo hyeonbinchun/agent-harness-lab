@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Priority, Todo } from './types';
-import { PRIORITY_LABEL } from './types';
-import DeleteTodoButton from './components/DeleteTodoButton';
 import AddTodoForm from './components/AddTodoForm';
+import TodoItem from './components/TodoItem';
 import './App.css';
 
 const STORAGE_KEY = 'todos';
@@ -18,8 +17,6 @@ export default function App() {
       return [];
     }
   });
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editText, setEditText] = useState('');
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
@@ -45,21 +42,8 @@ export default function App() {
     setTodos(todos.filter(t => t.id !== id));
   };
 
-  const startEdit = (todo: Todo) => {
-    setEditingId(todo.id);
-    setEditText(todo.text);
-  };
-
-  const confirmEdit = (id: number) => {
-    const text = editText.trim();
-    if (text) {
-      setTodos(todos.map(t => t.id === id ? { ...t, text } : t));
-    }
-    setEditingId(null);
-  };
-
-  const cancelEdit = () => {
-    setEditingId(null);
+  const editTodoText = (id: number, text: string) => {
+    setTodos(todos.map(t => t.id === id ? { ...t, text } : t));
   };
 
   const sortedTodos = [...todos].sort((a, b) => {
@@ -80,47 +64,15 @@ export default function App() {
       <ul className="todo-list">
         {sortedTodos.length === 0 && <li className="empty">아직 할 일이 없어요.</li>}
         {sortedTodos.map(todo => (
-          <li key={todo.id} className={todo.completed ? 'completed' : ''}>
-            {editingId === todo.id ? (
-              <>
-                <input
-                  className="edit-input"
-                  value={editText}
-                  autoFocus
-                  onChange={e => setEditText(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' && !e.nativeEvent.isComposing) confirmEdit(todo.id);
-                    if (e.key === 'Escape') cancelEdit();
-                  }}
-                  onBlur={cancelEdit}
-                />
-                <button onClick={cancelEdit}>취소</button>
-              </>
-            ) : (
-              <>
-                <span onClick={() => toggleTodo(todo.id)}>{todo.text}</span>
-                <select
-                  className="priority-select"
-                  aria-label={`${todo.text} 우선순위`}
-                  value={todo.priority}
-                  onChange={e => changePriority(todo.id, e.target.value as Priority)}
-                >
-                  <option value="high">{PRIORITY_LABEL.high}</option>
-                  <option value="medium">{PRIORITY_LABEL.medium}</option>
-                  <option value="low">{PRIORITY_LABEL.low}</option>
-                </select>
-                <input
-                  type="date"
-                  className="due-date-input"
-                  aria-label={`${todo.text} 마감일`}
-                  value={todo.dueDate ?? ''}
-                  onChange={e => changeDueDate(todo.id, e.target.value)}
-                />
-                <button className="edit-btn" onClick={() => startEdit(todo)}>수정</button>
-                <DeleteTodoButton onDelete={() => deleteTodo(todo.id)} />
-              </>
-            )}
-          </li>
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            onToggle={toggleTodo}
+            onDelete={deleteTodo}
+            onChangePriority={changePriority}
+            onChangeDueDate={changeDueDate}
+            onEditSave={editTodoText}
+          />
         ))}
       </ul>
     </div>
