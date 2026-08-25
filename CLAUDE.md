@@ -81,20 +81,24 @@ Commit messages follow Conventional Commits.
 
 ## Self-correction protocol
 
-구현 후 npm run verify를 실행한다.
+Run `npm run verify` after implementing.
 
-실패하면:
-1. 실패한 항목(type/lint/test)을 구체적으로 식별한다.
-2. 실패 원인에 대한 가설을 세운 뒤 수정한다. 원인 분석 없이 코드를 임의로 바꾸지 않는다.
-3. 다시 verify를 실행한다.
-4. 같은 종류의 실패가 3회 반복되면 더 시도하지 말고, 지금까지 시도한 것과
-   왜 안 됐는지를 요약해서 사용자에게 보고하고 중단한다.
-5. 버그를 고칠 때는 버그 자체만 고치지 말고, 그 버그를 재현하는 회귀 테스트를 함께 추가한다.
+If it fails:
+1. Identify the specific failing category (type/lint/test).
+2. Form a hypothesis about the cause before fixing it. Don't change code
+   arbitrarily without root-causing the failure.
+3. Re-run verify.
+4. If the same kind of failure repeats 3 times, stop trying, summarize what
+   was attempted and why it didn't work, and report to the user.
+5. When fixing a bug, don't just fix the bug itself — also add a regression
+   test that reproduces it.
 
-push 후 CI가 실패하면 (로컬보다 비용이 크므로 더 낮은 재시도 한도를 둔다):
-1. gh pr checks --watch로 결과를 기다린다.
-2. 실패하면 gh run view --log-failed로 로그를 확인해 원인을 진단한다.
-3. 로컬 verify는 통과했는데 CI에서만 실패했다면, 먼저 환경 차이
-   (Node 버전, 캐시된 의존성, timezone 등)를 의심한다.
-4. 수정 후 로컬 verify를 다시 통과시키고 push한다.
-5. 같은 원인으로 2회 이상 실패하면 중단하고 사용자에게 보고한다.
+If CI fails after a push (use a lower retry limit than local, since it's
+more expensive):
+1. Wait for the result with `gh pr checks --watch`.
+2. On failure, check the logs with `gh run view --log-failed` to diagnose
+   the cause.
+3. If local verify passed but CI failed, first suspect an environment
+   difference (Node version, cached dependencies, timezone, etc.).
+4. Fix it, get local verify passing again, and push.
+5. If the same cause fails 2 or more times, stop and report to the user.
