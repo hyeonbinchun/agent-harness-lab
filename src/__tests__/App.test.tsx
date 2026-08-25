@@ -65,6 +65,15 @@ describe('TODO 추가', () => {
     expect(screen.getByText('할 일이 없습니다.')).toBeInTheDocument();
   });
 
+  it('빈 문자열은 추가되지 않는다', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.click(screen.getByRole('button', { name: '추가' }));
+
+     expect(screen.getByText('아직 할 일이 없어요 😊')).toBeInTheDocument()
+  });
+
   it('공백만 입력하면 추가되지 않는다', async () => {
     const user = userEvent.setup();
     renderApp();
