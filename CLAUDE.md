@@ -79,6 +79,8 @@ Before committing:
 
 Commit messages follow Conventional Commits.
 
+A push is not considered complete until the corresponding CI run has finished and passed.
+
 ## Self-correction protocol
 
 Run `npm run verify` after implementing.
