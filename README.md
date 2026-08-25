@@ -1,15 +1,11 @@
 # agent-harness-lab
 
-AI Agent(Claude Code)가 코드를 작성할 때, 그 결과를 사람이 매번 검증하지
-않아도 되게 만드는 harness를 단계적으로 설계하고 실험한 기록.
+AI Agent(Claude Code)가 코드를 작성할 때, 그 결과를 사람이 매번 검증하지 않아도 되게 만드는 harness를 단계적으로 설계하고 실험한 기록.
 
-TODO 앱은 실험 대상. 목적은 "Agent가 실수해도
-system이 감지하고 복구하는 범위"를 넓히는 것이다.
 
 ## Why
 
-Agent에게 "검증해"라고 말하는 건 신뢰할 수 없다. 대신 Agent가 검증할
-수밖에 없는 environment를 만드는 게 이 프로젝트의 방향이다.
+목적은 "Agent가 실수해도 system이 감지하고 복구하는 범위"를 넓히는 것. Agent에게 "검증해"라고 말하는 건 신뢰할 수 없다. 대신 Agent가 검증할 수밖에 없는 environment를 만드는 게 이 프로젝트의 방향이다.
 
 ## Levels
 
@@ -23,7 +19,7 @@ Level 4 CI failure → Agent feedback → 자동 diagnosis → Agent self-correc
 각 레벨은 이전 레벨의 실패를 전제로 만들어졌다. "Agent가 이걸 못 할 수도
 있다"를 먼저 관찰하고, 그다음 그걸 막는 layer를 추가하는 순서로 진행했다.
 
-## What broke at each level (그리고 왜 다음 레벨이 필요했는가)
+## What broke at each level
 
 - **Level 0 → 1**: `npm run build` 통과를 기능 검증 성공으로 착각.
   한글 IME composition 버그를 build는 잡지 못함 → behavior-level test 필요.
@@ -35,9 +31,7 @@ Level 4 CI failure → Agent feedback → 자동 diagnosis → Agent self-correc
 - **Level 3 → 4**: merge가 막혀도 원인 진단과 수정은 여전히 사람이 함
   → self-correction protocol 필요.
 
-## Level 4에 대한 솔직한 평가
-
-Level 4는 "완전 자동"이 아니다. 실증된 것:
+## Level 4
 
 - CI 실패 → 로그 진단 → 환경 차이 원인 특정까지는 완전 자동
 - 원인이 된 파일 삭제처럼 되돌리기 어려운 액션은 Claude Code 자체의
@@ -47,20 +41,7 @@ Level 4는 "완전 자동"이 아니다. 실증된 것:
 - 전체 루프는 여전히 사람이 "merge까지 해도 좋아"처럼 명시적으로
   트리거해야 시작됨 — CI 실패가 자동으로 Agent 세션을 깨우진 않는다
 
-즉 실제 안전망은 하나가 아니라 최소 세 겹이다:
-
-repo 레벨 Branch protection (merge 차단)
-tool 레벨 Claude Code permission classifier (파괴적 액션 차단)
-protocol 레벨 CLAUDE.md self-correction (진단·재시도·보고)
-
-
-"merge까지 해도 좋다"는 광범위한 승인이 모든 파괴적 액션까지 자동으로
-승인하는 것은 아니었다 — 실험 중 Agent가 원인 파일을 삭제하려 할 때
-tool-level classifier가 별도로 막고 확인을 요구했다. Level 4는 이
-세 겹이 겹쳐서 만들어낸 결과지, CLAUDE.md 하나만으로 이룬 게 아니다.
-
-진짜 Level 5는 CI 실패가 사람의 트리거 없이 자동으로 Agent 세션을
-깨우는 것까지 포함해야 하는데, 아직 구현 안 함. 다음 단계 후보.
+다음 단계는 CI 실패가 사람의 트리거 없이 자동으로 Agent 세션을 깨우는 것까지 포함해
 
 ## Harness 구성 요소
 
