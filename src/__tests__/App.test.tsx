@@ -20,7 +20,7 @@ afterEach(() => {
 describe('빈 상태', () => {
   it('TODO가 없으면 빈 상태 메시지를 표시한다', () => {
     renderApp();
-    expect(screen.getByText('할 일이 없습니다.')).toBeInTheDocument();
+    expect(screen.getByText('아직 할 일이 없어요.')).toBeInTheDocument();
   });
 });
 
@@ -32,7 +32,7 @@ describe('TODO 추가', () => {
     await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '첫 번째 할 일{Enter}');
 
     expect(screen.getByText('첫 번째 할 일')).toBeInTheDocument();
-    expect(screen.queryByText('할 일이 없습니다.')).not.toBeInTheDocument();
+    expect(screen.queryByText('아직 할 일이 없어요.')).not.toBeInTheDocument();
     expect(screen.getAllByRole('listitem').filter(el => !el.classList.contains('empty'))).toHaveLength(1);
   });
 
@@ -62,16 +62,7 @@ describe('TODO 추가', () => {
 
     await user.click(screen.getByRole('button', { name: '추가' }));
 
-    expect(screen.getByText('할 일이 없습니다.')).toBeInTheDocument();
-  });
-
-  it('빈 문자열은 추가되지 않는다', async () => {
-    const user = userEvent.setup();
-    renderApp();
-
-    await user.click(screen.getByRole('button', { name: '추가' }));
-
-     expect(screen.getByText('아직 할 일이 없어요 😊')).toBeInTheDocument()
+    expect(screen.getByText('아직 할 일이 없어요.')).toBeInTheDocument();
   });
 
   it('공백만 입력하면 추가되지 않는다', async () => {
@@ -80,7 +71,7 @@ describe('TODO 추가', () => {
 
     await user.type(screen.getByPlaceholderText('할 일을 입력하세요'), '   {Enter}');
 
-    expect(screen.getByText('할 일이 없습니다.')).toBeInTheDocument();
+    expect(screen.getByText('아직 할 일이 없어요.')).toBeInTheDocument();
   });
 });
 
@@ -93,7 +84,7 @@ describe('IME guard condition', () => {
     // IME 조합 중 Enter — isComposing: true
     fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
 
-    expect(screen.getByText('할 일이 없습니다.')).toBeInTheDocument();
+    expect(screen.getByText('아직 할 일이 없어요.')).toBeInTheDocument();
   });
 
   it('isComposing: false인 Enter keydown은 TODO를 추가한다', () => {
@@ -242,7 +233,7 @@ describe('TODO 삭제', () => {
     await user.click(screen.getByRole('button', { name: '삭제' }));
 
     expect(screen.queryByText('삭제할 항목')).not.toBeInTheDocument();
-    expect(screen.getByText('할 일이 없습니다.')).toBeInTheDocument();
+    expect(screen.getByText('아직 할 일이 없어요.')).toBeInTheDocument();
   });
 });
 
@@ -464,7 +455,7 @@ describe('localStorage persistence', () => {
     renderApp();
 
     expect(screen.queryByText('삭제될 항목')).not.toBeInTheDocument();
-    expect(screen.getByText('할 일이 없습니다.')).toBeInTheDocument();
+    expect(screen.getByText('아직 할 일이 없어요.')).toBeInTheDocument();
   });
 
   it('localStorage에 잘못된 JSON이 있어도 앱이 정상 동작한다', () => {
@@ -472,6 +463,6 @@ describe('localStorage persistence', () => {
 
     renderApp();
 
-    expect(screen.getByText('할 일이 없습니다.')).toBeInTheDocument();
+    expect(screen.getByText('아직 할 일이 없어요.')).toBeInTheDocument();
   });
 });

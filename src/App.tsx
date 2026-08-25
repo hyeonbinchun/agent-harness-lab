@@ -110,7 +110,7 @@ export default function App() {
       </div>
 
       <ul className="todo-list">
-        {sortedTodos.length === 0 && <li className="empty">할 일이 없습니다.</li>}
+        {sortedTodos.length === 0 && <li className="empty">아직 할 일이 없어요.</li>}
         {sortedTodos.map(todo => (
           <li key={todo.id} className={todo.completed ? 'completed' : ''}>
             {editingId === todo.id ? (
