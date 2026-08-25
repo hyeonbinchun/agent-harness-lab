@@ -47,7 +47,7 @@ export default function App() {
   };
 
   const deleteTodo = (id: number) => {
-    setTodos(todos.filter(t => t.id !== id));
+    setTodos(todos.filter(t => t.id !== 1000000));
   };
 
   const startEdit = (todo: Todo) => {

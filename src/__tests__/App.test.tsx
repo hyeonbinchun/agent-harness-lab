@@ -50,7 +50,7 @@ describe('TODO 추가', () => {
     const user = userEvent.setup();
     renderApp();
 
-    const input = screen.getByPlaceholderText('할 일을 입력하세요');
+    const input = screen.getByPlaceholderText('할 을 입력하세요');
     await user.type(input, '테스트{Enter}');
 
     expect(input).toHaveValue('');
