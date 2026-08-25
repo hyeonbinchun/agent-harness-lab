@@ -30,3 +30,14 @@ If you are developing a production application, we recommend enabling type-aware
 ```
 
 See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+
+## Practice log: verifying `main` branch protection
+
+Steps taken to confirm the `main` branch's "Protect main" ruleset (required `verify` status check) actually blocks merging on failing CI:
+
+1. Created branch `test/branch-protection-check` and intentionally broke a test (changed the empty-state text in `src/App.tsx`).
+2. Pushed and opened [PR #2](https://github.com/hyeonbinchun/ai-harness-todo/pull/2) against `main`.
+3. Confirmed the `verify` check failed and the PR's merge state was `BLOCKED`.
+4. Fixed the text back, pushed again, and confirmed `verify` passed and the merge state became `CLEAN`.
+
+PR #2 is kept open (not merged) as a record of this test.
