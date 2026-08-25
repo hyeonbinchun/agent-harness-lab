@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import type { Priority, Todo } from './types';
+import { PRIORITY_LABEL } from './types';
 import DeleteTodoButton from './components/DeleteTodoButton';
+import AddTodoForm from './components/AddTodoForm';
 import './App.css';
 
 const STORAGE_KEY = 'todos';
 const PRIORITY_ORDER: Record<Priority, number> = { high: 0, medium: 1, low: 2 };
-const PRIORITY_LABEL: Record<Priority, string> = { high: '높음', medium: '보통', low: '낮음' };
 
 export default function App() {
   const [todos, setTodos] = useState<Todo[]>(() => {
@@ -17,9 +18,6 @@ export default function App() {
       return [];
     }
   });
-  const [input, setInput] = useState('');
-  const [priority, setPriority] = useState<Priority>('medium');
-  const [dueDate, setDueDate] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState('');
 
@@ -27,12 +25,8 @@ export default function App() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   }, [todos]);
 
-  const addTodo = () => {
-    const text = input.trim();
-    if (!text) return;
-    setTodos([...todos, { id: Date.now(), text, completed: false, priority, dueDate: dueDate || undefined }]);
-    setInput('');
-    setDueDate('');
+  const addTodo = (text: string, priority: Priority, dueDate?: string) => {
+    setTodos([...todos, { id: Date.now(), text, completed: false, priority, dueDate }]);
   };
 
   const toggleTodo = (id: number) => {
@@ -81,33 +75,7 @@ export default function App() {
     <div className="app">
       <h1>TODO</h1>
 
-      <div className="input-row">
-        <input
-          type="text"
-          value={input}
-          placeholder="할 일을 입력하세요"
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && !e.nativeEvent.isComposing && addTodo()}
-        />
-        <select
-          className="priority-select"
-          aria-label="우선순위"
-          value={priority}
-          onChange={e => setPriority(e.target.value as Priority)}
-        >
-          <option value="high">{PRIORITY_LABEL.high}</option>
-          <option value="medium">{PRIORITY_LABEL.medium}</option>
-          <option value="low">{PRIORITY_LABEL.low}</option>
-        </select>
-        <input
-          type="date"
-          className="due-date-input"
-          aria-label="마감일"
-          value={dueDate}
-          onChange={e => setDueDate(e.target.value)}
-        />
-        <button onClick={addTodo}>추가</button>
-      </div>
+      <AddTodoForm onAdd={addTodo} />
 
       <ul className="todo-list">
         {sortedTodos.length === 0 && <li className="empty">아직 할 일이 없어요.</li>}
