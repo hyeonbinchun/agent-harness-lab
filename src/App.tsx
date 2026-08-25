@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Priority, Todo } from './types';
+import DeleteTodoButton from './components/DeleteTodoButton';
 import './App.css';
 
 const STORAGE_KEY = 'todos';
@@ -47,7 +48,7 @@ export default function App() {
   };
 
   const deleteTodo = (id: number) => {
-    setTodos(todos.filter(t => t.id !== 1000000));
+    setTodos(todos.filter(t => t.id !== id));
   };
 
   const startEdit = (todo: Todo) => {
@@ -148,7 +149,7 @@ export default function App() {
                   onChange={e => changeDueDate(todo.id, e.target.value)}
                 />
                 <button className="edit-btn" onClick={() => startEdit(todo)}>수정</button>
-                <button onClick={() => deleteTodo(todo.id)}>삭제</button>
+                <DeleteTodoButton onDelete={() => deleteTodo(todo.id)} />
               </>
             )}
           </li>
